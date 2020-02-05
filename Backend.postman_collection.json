@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "58d51e38-c8dd-4e3e-9281-b8ebcbc9045e",
+		"name": "Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetAllUsers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "auth_token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTNiM2YzYjY5NjM2ZTNhMmM4YzliZjEiLCJuYW1lIjoibWF0ZXVzeiIsImxhc3RfbmFtZSI6Imd1dG93c2tpIiwibG9naW4iOiJtYXRlbGtvMTIzIiwiZW1haWwiOiJtYXRldXN6MjgwNzk4QGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJHJoU0tKbG9sbUhJa1p2M01wVUdVTE96QnowNU84SDc4ejZ2dG5ILkFxYW1oM1ZFYzBUb1N1IiwiY3JlYXRlZEF0IjoiMjAyMC0wMi0wNVQyMjoxODozNS4xMjZaIiwidXBkYXRlZEF0IjoiMjAyMC0wMi0wNVQyMjoxODozNS4xMjZaIiwiX192IjowLCJpYXQiOjE1ODA5NDE2NTcsImV4cCI6MTU4MDk0MjU1N30.J-KoDmJNcPNvSdb5pjjtpZuH7yvgOTQLVGGpbfmpiNg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"user"
+					]
+				},
+				"description": "Get all users"
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterUser",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "13e2b1d1-10af-48c2-8d0b-ea3609fec21a",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Mateusz\",\n\t\"last_name\": \"Gutowski\",\n\t\"login\": \"matelko123\",\n\t\"email\": \"mateusz280798@gmail.com\",\n\t\"password\": \"Klop0987!@#$\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"register"
+					]
+				},
+				"description": "Register new user"
+			},
+			"response": []
+		},
+		{
+			"name": "LoginUser",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"login\": \"matelko123\",\n\t\"password\": \"Klop0987!@#$\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "Login in"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

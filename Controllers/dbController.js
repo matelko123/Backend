@@ -3,12 +3,13 @@ const { dbString } = require("../config");
 
 //* Set up default mongoose connection
 mongoose
-  .connect(dbString, {
-    useNewUrlParser: true,
-    useCreateIndex: true
-  })
-  .then(() => console.log("DB connected successful!"))
-  .catch(err => console.error("Something went wrong!", err));
+    .connect(dbString, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useUnifiedTopology: true
+    })
+    .then(() => console.log("DB connected successful!"))
+    .catch(err => console.error("Something went wrong!", err));
 
 //* Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
