@@ -4,7 +4,7 @@
  */
 
 module.exports = function(app) {
-    app.use("/", require("./homeRoute"));
-    app.use("/auth", require("./authRoute"));
-    app.use("/user", require("./userRoute"));
+    app.use("/", require("./home"));
+    app.use("/auth", require("./auth"));
+    app.use("/user", require("./user"));
 };

@@ -1,21 +1,22 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
+const User = require("../Models/user");
 const Joi = require("joi");
 const { secret } = require("../config");
+const { logger, log_errors, log_warn } = require("../Helpers/logger");
 
 exports.Id = id => {
     if (!id || id == null) return false;
     const validate = mongoose.Types.ObjectId.isValid(id);
-    // console.log(validate);
+    // logger(validate);
     if (!validate) {
-        console.log("Użytkownik o takim id nie istnieje");
+        log_warn("User not found.", id);
         return false;
     }
     return true;
 };
 
-//* Walidacja danych
+//* Validate user
 exports.User = user => {
     const schema = {
         name: Joi.string()
@@ -43,45 +44,54 @@ exports.User = user => {
     return Joi.validate(user, schema);
 };
 
-//* Walidacja tokenu JWT
+//* Validate token JWT
 exports.JWT = token => {
-    if (!token) return { success: false, msg: "Brak tokenu" };
+    if (!token) return false;
 
     if (!secret) {
-        console.log("Brak klucza w .env!");
-        return { success: false, msg: "Brak klucza w .env!" };
+        log_errors("Empty key 'secret' in .env file!", null, 1);
+        return false;
     }
 
     const verify = jwt.verify(token, secret, (err, decoded) => {
         if (err) {
-            //* Czy token wygasł
+            //* If token expired
             if (err.name === "TokenExpiredError") {
-                return { success: false, msg: "Token expired!" };
+                log_errors("Token expired!");
+                return false;
             } else if (err.name === "JsonWebTokenError") {
-                return { success: false, msg: "Nieprawidłowy token!" };
+                // log_errors("Wrong token.");
+                return false;
             } else {
-                return { success: false, msg: "Nieprawidłowy token!" };
+                // log_errors("Wrong token.");
+                return false;
             }
         }
 
-        //* Walidacja id
-        if (!decoded._id)
-            return { success: false, msg: "Nieprawidłowy token!" };
-        if (!this.Id(decoded._id))
-            return { success: false, msg: "Brak takiego użytkowika!" };
+        //* Validate id
+        if (!decoded._id) return false;
+        if (!this.Id(decoded._id)) {
+            // log_warn("User not found.", decoded._id);
+            return false;
+        }
 
-        //* Czy istnieje taki użytkownik o takim id
+        //* If user exist
         User.findById(decoded._id, function(err, user) {
-            if (err) return { success: false, msg: "Coś poszło nie tak" };
-            if (user == null)
-                return { success: false, msg: "Brak takiego użytkowika!" };
+            if (err) {
+                log_errors(null, err);
+                return false;
+            }
+            if (user == null) {
+                // log_warn("User not found.", decoded._id);
+                return false;
+            }
         });
 
         const tokenExp = (decoded.exp - decoded.iat) / 60;
-        console.log(`Token ważny jeszcze: ${tokenExp} minut`);
-        return { success: true, msg: "" };
+        // log_warn(`Token: ${tokenExp} minute`);
+        return true;
     });
 
-    // console.log(verify);
+    // logger(verify);
     return verify;
 };

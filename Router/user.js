@@ -7,7 +7,8 @@
  */
 
 const router = require("express").Router();
-const { userController, authController } = require("../Controllers");
+const userController = require("../Controllers/user");
+const authController = require("../Controllers/auth");
 const isLogged = authController.isLogged;
 
 router

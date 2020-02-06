@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { saltRounds } = require("../config");
 const Schema = mongoose.Schema;
+const { logger } = require("../Helpers/logger");
 
 //* Model użytkownika
 const UserSchema = new Schema(
@@ -49,7 +50,7 @@ UserSchema.pre("save", function(next) {
     if (!user.isModified("password")) return next();
 
     //* Generate Salt
-    // console.log(typeof saltRounds, saltRounds);
+    // logger(saltRounds);
     bcrypt.genSalt(parseInt(saltRounds), (err, salt) => {
         if (err) return next(err);
 

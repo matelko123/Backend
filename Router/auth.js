@@ -5,7 +5,7 @@
  */
 
 const router = require("express").Router();
-const { userController } = require("../controllers");
+const userController = require("../Controllers/user");
 
 router.post("/login", userController.login);
 router.post("/register", userController.newUser);
