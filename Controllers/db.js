@@ -9,10 +9,13 @@ const connectDB = async () => {
             useNewUrlParser: true,
             useCreateIndex: true,
             useFindAndModify: false,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            poolSize: 10
         });
         //* Get Mongoose to use the global promise library
         mongoose.Promise = global.Promise;
+
+        mongoose.connection.on("disconnected", connectDB);
 
         console.log("MongoDB connected successful!");
     } catch (err) {

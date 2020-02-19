@@ -8,13 +8,12 @@
 
 const router = require("express").Router();
 const userController = require("../Controllers/user");
-const authController = require("../Controllers/auth");
-const isLogged = authController.isLogged;
+const { isLogged } = require("../Controllers/auth");
 
 router
-    .get("/", isLogged, userController.getAll)
-    .get("/:id", isLogged, userController.getOne)
-    .patch("/:id", isLogged, userController.update)
-    .delete("/:id", isLogged, userController.delete);
+    .get("/", isLogged, userController.getAllUsers)
+    .get("/:id", isLogged, userController.getUserById)
+    .patch("/:id", isLogged, userController.updateUser)
+    .delete("/:id", isLogged, userController.deleteUser);
 
 module.exports = router;

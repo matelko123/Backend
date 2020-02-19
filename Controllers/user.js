@@ -2,152 +2,214 @@ const User = require("../Models/user");
 const jwt = require("jsonwebtoken");
 const validate = require("./validator");
 const { secret } = require("../config");
-const { log_errors } = require("../Helpers/logger");
+const { log_errors, log_warn } = require("../Helpers/logger");
 
-//* Get all users
-exports.getAll = async (req, res, next) => {
-    await User.find({}, (err, users) => {
-        if (err) {
-            log_errors(null, err, 1);
-            return res.json({ success: false, err: "Something went wrong." });
-        }
-        if (users.length === 0)
-            return res.json({ success: false, err: "No users found." });
-        res.json({ success: true, users: users });
-    });
+exports.getAllUsers = async (req, res) => {
+    try {
+        await User.find({}, (err, users) => {
+            if (err) {
+                log_errors(null, err);
+                return res.json({
+                    success: false,
+                    msg: "Something went wrong.",
+                    err
+                });
+            }
+
+            if (users.length === 0) {
+                return res.json({
+                    success: false,
+                    msg: "No users found."
+                });
+            }
+
+            users.map(function(user) {
+                user.password = undefined;
+                return user;
+            });
+
+            return res.json({ success: true, data: users });
+        });
+    } catch (err) {
+        log_errors(null, err);
+        res.json({
+            success: false,
+            msg: "Something went wrong.",
+            err
+        });
+    }
 };
 
-//* Get user by id
-exports.getOne = async (req, res, next) => {
-    //* Valid id
+exports.getUserById = async (req, res) => {
     const id = req.params.id;
-    if (!validate.Id(id)) return res.json({ success: false, msg: "Wrong ID" });
+    if (!validate.Id(id))
+        return res.json({ success: false, msg: "Incorrect ID." });
 
-    await User.findById(id, (err, user) => {
-        if (err) return res.json({ success: false, err: err });
-        if (user == null)
-            return res.json({
-                success: false,
-                msg: "User not found."
-            });
-        else res.json({ success: true, users: users });
-    });
+    try {
+        await User.findById(id, (err, user) => {
+            if (err) {
+                return res.json({
+                    success: false,
+                    msg: "Something went wrong",
+                    err
+                });
+            }
+
+            if (user == null) {
+                return res.json({
+                    success: false,
+                    msg: "User not found."
+                });
+            }
+
+            user.password = undefined;
+            return res.json({ success: true, data: user });
+        });
+    } catch (err) {
+        log_errors(null, err);
+        res.json({
+            success: false,
+            msg: "Something went wrong.",
+            err
+        });
+    }
 };
 
 //* Sign up
-exports.newUser = async (req, res, next) => {
+exports.newUser = async (req, res) => {
     //* Validate
     const { error } = validate.User(req.body);
     if (error) {
-        log_errors(null, error, 1);
-        return res.json({ success: false, msg: "Something went wrong." });
+        log_errors(null, error);
+        return res.json({
+            success: false,
+            msg: "Something went wrong.",
+            err: error
+        });
     }
 
-    //* If login and email al in use.
-    let user = await User.findOne({ login: req.body.login });
-    if (user)
-        return res.json({
+    try {
+        //* If login and email are in use.
+        const { name, last_name, login, email, password } = req.body;
+        let user = await User.findOne({ login });
+        if (user) {
+            return res.json({
+                success: false,
+                msg: "Login is already taken."
+            });
+        }
+
+        user = await User.findOne({ email });
+        if (user) {
+            return res.json({
+                success: false,
+                msg: "Email is already taken."
+            });
+        }
+
+        user = new User({ name, last_name, login, email, password });
+        await user.save();
+
+        const token = jwt.sign(user.toJSON(), secret, { expiresIn: "15m" });
+        return res.json({ success: true, data: { user, token } });
+    } catch (err) {
+        log_errors(null, err);
+        res.json({
             success: false,
-            data: { field: "login", msg: "Login is already taken." }
+            msg: "Something went wrong.",
+            err
         });
-
-    user = await User.findOne({ email: req.body.email });
-    if (user)
-        return res.json({
-            success: false,
-            data: { field: "email", msg: "Email is already taken." }
-        });
-
-    //* New user
-    user = new User({
-        name: req.body.name,
-        last_name: req.body.last_name,
-        login: req.body.login,
-        email: req.body.email,
-        password: req.body.password
-    });
-
-    //* Save user to DB
-    await user.save();
-    var token = jwt.sign(user.toJSON(), secret, {
-        expiresIn: "15m"
-    });
-    return res.status(201).json({ success: true, user: user, token: token });
+    }
 };
 
 //* Sign in
-exports.login = async (req, res, next) => {
-    if (!req.body.login || !req.body.password)
+exports.login = async (req, res) => {
+    const { login, password } = req.body;
+    if (!login || !password) {
         return res.json({
             success: false,
             msg: "Login or password is missing."
         });
+    }
 
-    const login = req.body.login;
-    const password = req.body.password;
-    User.findOne({ login: login }, async function(err, user) {
+    User.findOne({ login }, async (err, user) => {
         if (err) {
-            log_errors(null, err, 1);
-            return res.json({ success: false, msg: "Something went wrong." });
+            log_errors(null, err);
+            return res.json({
+                success: false,
+                msg: "Something went wrong.",
+                err
+            });
         }
-        if (!user)
+
+        if (!user) {
             return res.json({
                 success: false,
                 msg: "User not found."
             });
+        }
 
         await user.comparePassword(password, (err, isMatch) => {
             if (isMatch && !err) {
-                //* if user is found and password is right create a token
-                var token = jwt.sign(user.toJSON(), secret, {
+                const token = jwt.sign(user.toJSON(), secret, {
                     expiresIn: "15m"
                 });
-                //* return the information including token as JSON
-                return res.json({ success: true, user: user, token: token });
-            } else {
-                return res.json({
-                    success: false,
-                    msg: "Password is incorrect."
-                });
+                return res.json({ success: true, data: { user, token } });
             }
+            return res.json({
+                success: false,
+                msg: "Password is incorrect.",
+                err
+            });
         });
     });
 };
 
-//* Delete user
-exports.delete = async (req, res, next) => {
-    //* Valid id
+//* deleteUser user
+exports.deleteUser = async (req, res) => {
     const id = req.params.id;
     if (!validate.Id(id)) {
         return res.json({ success: false, msg: "Wrong ID." });
     }
 
+    const user = await User.findById(id);
+    if (!user) {
+        return res.json({
+            success: false,
+            msg: "User not found."
+        });
+    }
+
     await User.findOneAndDelete({ _id: id }, err => {
         if (err) {
-            log_errors(null, error, 1);
-            return res.json({ success: false, msg: "Something went wrong." });
-        } else res.json({ success: true, msg: "The user has been removed." });
+            log_errors(null, err);
+            return res.json({
+                success: false,
+                msg: "Something went wrong.",
+                err
+            });
+        }
+        return res.json({ success: true, msg: "The user has been removed." });
     });
 };
 
 //* Update user
-exports.update = async (req, res, next) => {
-    //* Valid
+exports.updateUser = async (req, res) => {
     const id = req.params.id;
     if (!validate.Id(id)) return res.json({ success: false, msg: "Wrong ID." });
 
-    //* Get user by id
     let user = await User.findById(id);
     if (!user) res.json({ success: false, msg: "User not found." });
 
-    //* If login already taken
-    if (req.body.login && req.body.login !== user.login) {
-        user = await User.findOne({ login: req.body.login });
-        if (user)
+    const { login, email } = req.body;
+    if (login && login !== user.login) {
+        user = await User.findOne({ login });
+        if (user) {
             return res.json({
                 success: false,
                 msg: "Login is already taken."
             });
+        }
     }
 
     //* If email already taken
@@ -189,7 +251,7 @@ exports.update = async (req, res, next) => {
     //* Update in DB
     const updated = await User.findOneAndUpdate({ _id: id }, updatedUser);
     if (!updated) {
-        log_warn(null, error);
+        // log_warn(null, error);
         return res.json({ success: false, msg: "Something went wrong." });
     }
 

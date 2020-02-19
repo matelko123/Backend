@@ -10,6 +10,7 @@ module.exports = {
     appDir: path.resolve(__dirname),
     PORT: process.env.PORT || 3000,
     dbString: process.env.dbString,
-    secret: process.env.secret || QWERTY123,
-    saltRounds: process.env.saltRounds || 10
+    secret: process.env.secret || "QWERTY123",
+    saltRounds: process.env.saltRounds || 10,
+    debug: process.env.debug || false
 };

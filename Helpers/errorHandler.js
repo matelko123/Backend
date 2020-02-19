@@ -7,11 +7,6 @@ exports.Handler = (err, req, res, next) => {
     }
 };
 
-exports.logErrors = (err, req, res, next) => {
-    console.log("asdasd222", err);
-    next(new Error(err));
-};
-
 exports.error404 = (err, req, res, next) => {
     res.status(404).send({ error: "Not found!" });
     next(err);
