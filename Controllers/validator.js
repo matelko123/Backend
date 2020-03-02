@@ -3,14 +3,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../Models/user");
 const Joi = require("joi");
 const { secret } = require("../config");
-const { logger, log_errors, log_warn } = require("../Helpers/logger");
+const { log_errors, log_warn } = require("../Helpers/logger");
 
 exports.Id = id => {
     if (!id || id == null) return false;
     const validate = mongoose.Types.ObjectId.isValid(id);
     // logger(validate);
     if (!validate) {
-        log_warn("User not found.", id);
+        log_warn("User not found.", { id, validate });
         return false;
     }
     return true;
@@ -60,10 +60,10 @@ exports.JWT = token => {
                 log_errors("Token expired!");
                 return false;
             } else if (err.name === "JsonWebTokenError") {
-                // log_errors("Wrong token.");
+                log_errors("Wrong token.");
                 return false;
             } else {
-                // log_errors("Wrong token.");
+                log_errors("Wrong token.");
                 return false;
             }
         }
@@ -86,9 +86,6 @@ exports.JWT = token => {
                 return false;
             }
         });
-
-        const tokenExp = (decoded.exp - decoded.iat) / 60;
-        // log_warn(`Token: ${tokenExp} minute`);
         return true;
     });
 

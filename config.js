@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -12,5 +13,5 @@ module.exports = {
     dbString: process.env.dbString,
     secret: process.env.secret || "QWERTY123",
     saltRounds: process.env.saltRounds || 10,
-    debug: process.env.debug || false
+    debug: process.env.debug || true
 };

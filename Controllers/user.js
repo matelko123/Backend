@@ -2,7 +2,7 @@ const User = require("../Models/user");
 const jwt = require("jsonwebtoken");
 const validate = require("./validator");
 const { secret } = require("../config");
-const { log_errors, log_warn } = require("../Helpers/logger");
+const { log_errors } = require("../Helpers/logger");
 
 exports.getAllUsers = async (req, res) => {
     try {
@@ -50,7 +50,7 @@ exports.getUserById = async (req, res) => {
             if (err) {
                 return res.json({
                     success: false,
-                    msg: "Something went wrong",
+                    msg: "Something went wrong.",
                     err
                 });
             }
@@ -213,8 +213,8 @@ exports.updateUser = async (req, res) => {
     }
 
     //* If email already taken
-    if (req.body.email && req.body.email !== user.email) {
-        user = await User.findOne({ email: req.body.email });
+    if (email && email !== user.email) {
+        user = await User.findOne({ email: email });
         if (user)
             return res.json({
                 success: false,

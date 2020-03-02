@@ -10,7 +10,7 @@ const connectDB = async () => {
             useCreateIndex: true,
             useFindAndModify: false,
             useUnifiedTopology: true,
-            poolSize: 10
+            keepAlive: 1
         });
         //* Get Mongoose to use the global promise library
         mongoose.Promise = global.Promise;

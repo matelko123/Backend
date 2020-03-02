@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const { debug } = require("../config");
 const FgBlack = "\x1b[30m",
     FgRed = "\x1b[31m",
@@ -30,24 +31,21 @@ exports.logger = name => {
 };
 
 exports.log_errors = (msg = "Something went wrong.", err = "", code = 0) => {
-    if (debug) {
-        let e = new Error();
-        let frame = e.stack.split("\n")[2];
-        let file = frame.split(" ").reverse()[0];
-        let output = `${FgRed}[LOGGER] ${FgWhite}${file} ${Reset}${FgBlue}>>${FgWhite}${FgGreen} ${Reset}${msg}`;
-        if (err) output += " : " + err;
-        console.log(output);
-        //* Exit process with failure
-        if (code) process.exit(1);
-    }
+    let e = new Error();
+    let frame = e.stack.split("\n")[2];
+    let file = frame.split(" ").reverse()[0];
+    let output = `${FgRed}[LOGGER] ${FgWhite}${file} ${Reset}${FgBlue}>>${FgWhite}${FgGreen} ${Reset}${msg}`;
+    if (err) output += " : " + err;
+    console.log(output);
+    //* Exit process with failure
+    // eslint-disable-next-line no-undef
+    if (code) process.exit(1);
 };
 exports.log_warn = (msg = "Something went wrong.", err = "") => {
-    if (debug) {
-        let e = new Error();
-        let frame = e.stack.split("\n")[2];
-        let file = frame.split(" ")[6];
-        let output = `${FgYellow}[LOGGER] ${FgWhite}${file} ${Reset}${FgBlue}>>${FgWhite}${FgGreen} ${Reset}${msg}`;
-        if (err) output += " : " + err;
-        console.log(output);
-    }
+    let e = new Error();
+    let frame = e.stack.split("\n")[2];
+    let file = frame.split(" ")[6];
+    let output = `${FgYellow}[LOGGER] ${FgWhite}${file} ${Reset}${FgBlue}>>${FgWhite}${FgGreen} ${Reset}${msg}`;
+    if (err) output += " : " + err;
+    console.log(output);
 };

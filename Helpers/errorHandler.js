@@ -1,5 +1,4 @@
 exports.Handler = (err, req, res, next) => {
-    console.log("asdasd1111");
     if (req.xhr) {
         res.status(500).send("Something failed!");
     } else {
