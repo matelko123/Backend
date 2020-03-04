@@ -1,29 +1,45 @@
 {
     "name": "backend",
     "version": "1.0.0",
-    "description": "Simple backend server. Express.js + MongoDB",
+    "description": "Simply backend server. Express.js + MongoDB",
     "main": "server.js",
-    "scripts": {
-        "start": "node server.js",
-        "dev": "nodemon server.js",
-        "lint": "eslint ./",
-        "lint:fix": "npm run lint --silent -- --fix ./"
-    },
-    "author": "Mateusz Gutowski",
-    "license": "ISC",
     "dependencies": {
         "bcrypt": "^3.0.8",
         "body-parser": "^1.19.0",
         "cors": "^2.8.5",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
+        "http": "0.0.0",
         "joi": "^14.3.1",
         "jsonwebtoken": "^8.5.1",
+        "method-override": "^3.0.0",
         "mongoose": "^5.8.11",
         "morgan": "^1.9.1"
     },
     "devDependencies": {
         "eslint": "^6.8.0",
-        "eslint-plugin-react": "^7.18.3"
-    }
+        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint-config-standard": "^14.1.0",
+        "eslint-plugin-import": "^2.20.1",
+        "eslint-plugin-node": "^11.0.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-react": "^7.18.3",
+        "eslint-plugin-standard": "^4.0.1"
+    },
+    "scripts": {
+        "start": "node server.js",
+        "dev": "env NODE_ENV=development nodemon server.js",
+        "lint": "eslint ./",
+        "lint:fix": "eslint --fix ./"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/matelko123/Backend.git"
+    },
+    "author": "Mateusz Gutowski",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/matelko123/Backend/issues"
+    },
+    "homepage": "https://github.com/matelko123/Backend#readme"
 }

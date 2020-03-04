@@ -1,10 +1,13 @@
-☐ Naprawić errorController
 ☐ Poprawić validator.js
 ☐ Naprawić updateUser
-☐ Dodać emotki do console.log
-☐ Dodać npm run config który odpala plik config-npm.js który wypisze wszytkie process.env
+✔ Dodać emotki do console.log @done(20-03-04 18:45)
 ✔ Poprawić ważność tokenu (cały czas 15 minut) @done(20-03-02 08:18)
-☐ Tworzyć serwer za pomocą module http
+✔ Tworzyć serwer za pomocą module http @done(20-03-04 20:16)
+☐ Stworzyć readme.md
+☐ Dodać logi do pliku
+☐ Error handler 
+☐ Resetowanie hasła
+
 
 Napisać testy sprawdzające przy pomocy JEST
 ☐ Testy do sprawdzania kontrolera użytkowników

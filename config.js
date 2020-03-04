@@ -1,17 +1,18 @@
-/* eslint-disable no-undef */
-const path = require("path");
-const dotenv = require("dotenv");
+const path = require('path');
+const dotenv = require('dotenv');
+
 dotenv.config();
 
-const { log_errors } = require("./Helpers/logger");
-
-if (!process.env.dbString) log_errors("db string no exist!");
+if (!process.env.DBString) {
+    console.log('DB string no exist!');
+    process.exit(1);
+}
 
 module.exports = {
-    appDir: path.resolve(__dirname),
+    AppDir: path.resolve(__dirname),
     PORT: process.env.PORT || 3000,
-    dbString: process.env.dbString,
-    secret: process.env.secret || "QWERTY123",
-    saltRounds: process.env.saltRounds || 10,
-    debug: process.env.debug || true
+    HOSTNAME: process.env.HOSTNAME || 'localhost',
+    DBString: process.env.DBString,
+    Secret: process.env.Secret || 'QWERTY123',
+    SaltRounds: process.env.SaltRounds || 10
 };

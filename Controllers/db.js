@@ -1,26 +1,26 @@
-const mongoose = require("mongoose");
-const { dbString } = require("../config");
-const { log_errors } = require("../Helpers/logger");
+const mongoose = require('mongoose');
 
-//* Set up default mongoose connection
-const connectDB = async () => {
+const { DBString } = require('../config');
+const log = require('../Helpers/logger');
+
+const connect = async () => {
     try {
-        await mongoose.connect(dbString, {
+        await mongoose.connect(DBString, {
             useNewUrlParser: true,
             useCreateIndex: true,
             useFindAndModify: false,
             useUnifiedTopology: true,
             keepAlive: 1
         });
-        //* Get Mongoose to use the global promise library
+        // Get Mongoose to use the global promise library
         mongoose.Promise = global.Promise;
 
-        mongoose.connection.on("disconnected", connectDB);
+        mongoose.connection.on('disconnected', connect);
 
-        console.log("MongoDB connected successful!");
+        log.success('DB connected successful!');
     } catch (err) {
-        log_errors("DB connected failed!", err.message, 1);
+        log.error('DB connected failed!', err.message, 1);
     }
 };
 
-module.exports = connectDB;
+module.exports = connect;

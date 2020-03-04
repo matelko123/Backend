@@ -1,13 +1,13 @@
 /*
- ! Router - Autoryzacja
- *  - (POST)    /auth/login      - Logowanie
- *  - (POST)    /auth/register   - Rejestracja
+ ! Router - Auth Route
+ *  - (POST)    /auth/login      - Login
+ *  - (POST)    /auth/register   - Register
  */
 
-const router = require("express").Router();
-const userController = require("../Controllers/user");
+const router = require('express').Router();
+const userController = require('../Controllers/user');
 
-router.post("/login", userController.login);
-router.post("/register", userController.newUser);
+router.post('/login', userController.login);
+router.post('/register', userController.newUser);
 
 module.exports = router;
